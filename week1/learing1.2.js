@@ -36,20 +36,19 @@
 
 // sumOfTwoNumbers(13,17,sumData);
 
-// function timer(count){
-//     let countnumber = parseInt(count);
+function timer(count) {
+  let countNumber = parseInt(count);
 
-// const setTime = setInterval(()=>{
-//     countnumber--;
-// const  actualTime = countnumber < 10 ? `0${countnumber}` : countnumber;
-// console.log(actualTime);
-// if(countnumber<=0){
-//     clearTimeout(setTime);
-// }
-
-// },1000)
-// }
-// // timer(5)
+  const setTime = setInterval(() => {
+    countNumber--;
+    const actualTime = countNumber < 10 ? `0${countNumber}` : countNumber;
+    console.log(actualTime);
+    if (countNumber <= 0) {
+      clearTimeout(setTime);
+    }
+  }, 1000);
+}
+timer(5);
 
 // const ar1 =[1,2,3,4];
 // const ar2 =[5,6,7,8,9,10];
@@ -71,7 +70,6 @@
 //   }
 //   return console.log(evenNum, oddNum);(evenNum);
 // };
-
 
 // numberType(10);
 
