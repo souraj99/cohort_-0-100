@@ -1,33 +1,71 @@
-// creating a new http server using express
-import express from "express";
-import { authMiddleware } from "./middlewares";
+import express from 'express';
+import jwt from 'jsonwebtoken';
+// const express = require("express");
+// const jwt = require("jsonwebtoken");
+const jwtPassword = "123456";
 
 const app = express();
-const port = 3000;
+app.use(express.json());
+const ALL_USERS = [
+    {
+        username: "souraj@gmail.com",
+        password: "123",
+        name: "souraj ghosh",
+    },
+    {
+        username: "raman@gmail.com",
+        password: "123321",
+        name: "Raman singh",
+    },
+    {
+        username: "priya@gmail.com",
+        password: "123321",
+        name: "Priya kumari",
+    },
+];
 
-const sum = (num) => {
-  let ans = 0;
-  for (let i = 0; i < num; i++) ans += i;
-  return ans;
-};
+function userExists(username, password) {
+    // write logic to return true or false if this user exists
+    // in ALL_USERS array
+    return ALL_USERS.some(user => user.username === username && user.password === password);
+}
 
-// app.get("/", (req, res) => {
-//   const query = parseInt(req.query.num);
-//   if (isNaN(query) || query < 0) {
-//     return res.sendStatus(400);
-//   }
-//   const result = sum(query);
-//   res.send(result.toString());
-// });
+app.post("/signin", function (req, res) {
+    const username = req.body.username;
+    const password = req.body.password;
 
-app.get("/health-checkup", (req, res) => {
-  const kidneyId = req.params.kidneyId;
-  const userName = req.headers.userName;
-  const password = req.headers.password;
+    if (!userExists(username, password)) {
+        return res.status(403).json({
+            msg: "User doesnt exist in our in memory db",
+        });
+    }
 
-
-    res.send("Your heart is healthy")
-
+    var token = jwt.sign({username: username}, jwtPassword);
+    return res.json({
+        token,
+    });
 });
 
-app.listen(port);
+app.get("/users", function (req, res) {
+    const token = req.headers.authorization;
+    try {
+        const decoded = jwt.verify(token, jwtPassword);
+        const username = decoded.username;
+        // return a list of users other than this username
+        const otherUsers = ALL_USERS.filter(user => user.username !== username);
+        console.log(otherUsers)
+        return res.json({
+            users: otherUsers
+        });
+    } catch (err) {
+
+        return res.status(401).json({
+            // msg: "Invalid token",
+            msg: err
+        });
+    }
+});
+
+app.listen(3001, () => {
+    console.log("listening on port 3001")
+})
